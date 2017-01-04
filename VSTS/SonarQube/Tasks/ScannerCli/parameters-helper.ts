@@ -1,33 +1,32 @@
 
 import tl = require("vsts-task-lib/task");
 
-import {ToolRunner} from "vsts-task-lib/toolrunner";
-import {SonarQubeEndpoint} from "./endpoint";
-import {Utils} from "./utils";
-import {VstsServerUtils} from "./vsts-utils";
+import { ToolRunner } from "vsts-task-lib/toolrunner";
+import { SonarQubeEndpoint } from "vsts-sonarqube-common/SonarQubeEndpoint";
+import { VstsServerUtils } from "vsts-sonarqube-common/VstsServerUtils";
 
-export class SonarQubeParameterHelper {
+export class ParametersHelper {
 
-     /**
-      * Applies parameters for SonarQube features enabled by the user.
-      * @param toolRunner     ToolRunner to add parameters to
-      * @returns {ToolRunner} ToolRunner with parameters added
-      */
-    public static addSonarQubeParameters(toolRunner: ToolRunner): ToolRunner {
-        toolRunner = SonarQubeParameterHelper.addSonarQubeConnectionParams(toolRunner);
-        toolRunner = SonarQubeParameterHelper.addSonarQubeProjectParams(toolRunner);
-        toolRunner = SonarQubeParameterHelper.addSonarQubeSourcesParams(toolRunner);
-        toolRunner = SonarQubeParameterHelper.addSonarQubeSettingsParams(toolRunner);
-        toolRunner = SonarQubeParameterHelper.addSonarQubeIssuesModeInPrBuild(toolRunner);
+    /**
+     * Applies parameters for SonarQube features enabled by the user.
+     * @param toolRunner     ToolRunner to add parameters to
+     * @returns {ToolRunner} ToolRunner with parameters added
+     */
+    public static applyParameters(toolRunner: ToolRunner): ToolRunner {
+        toolRunner = ParametersHelper.addConnectionParams(toolRunner);
+        toolRunner = ParametersHelper.addProjectParams(toolRunner);
+        toolRunner = ParametersHelper.addSourcesParams(toolRunner);
+        toolRunner = ParametersHelper.addSettingsParams(toolRunner);
+        toolRunner = ParametersHelper.addIssuesModeInPrBuild(toolRunner);
         return toolRunner;
-}
+    }
 
     /**
      * Applies required parameters for connecting a Java-based plugin to SonarQube.
      * @param toolRunner     ToolRunner to add parameters to
      * @returns {ToolRunner} ToolRunner with parameters added
      */
-    public static addSonarQubeConnectionParams(toolRunner: ToolRunner): ToolRunner {
+    public static addConnectionParams(toolRunner: ToolRunner): ToolRunner {
         let sqEndpoint: SonarQubeEndpoint = SonarQubeEndpoint.getTaskSonarQubeEndpoint();
         toolRunner.arg("-Dsonar.host.url=" + sqEndpoint.Url);
         toolRunner.arg("-Dsonar.login=" + sqEndpoint.Token);
@@ -40,13 +39,10 @@ export class SonarQubeParameterHelper {
      * @param toolRunner     ToolRunner to add parameters to
      * @returns {ToolRunner} ToolRunner with parameters added
      */
-    public static addSonarQubeProjectParams(toolRunner: ToolRunner): ToolRunner {
-        let projectName: string = tl.getInput("projectName", true);
-        let projectKey: string = tl.getInput("projectKey", true);
-        let projectVersion: string = tl.getInput("projectVersion", true);
-        toolRunner.arg("-Dsonar.projectKey=" + projectKey);
-        toolRunner.arg("-Dsonar.projectName=" + projectName);
-        toolRunner.arg("-Dsonar.projectVersion=" + projectVersion);
+    public static addProjectParams(toolRunner: ToolRunner): ToolRunner {
+        toolRunner.arg("-Dsonar.projectKey=" + tl.getInput("projectKey", true));
+        toolRunner.arg("-Dsonar.projectName=" + tl.getInput("projectName", true));
+        toolRunner.arg("-Dsonar.projectVersion=" + tl.getInput("projectVersion", true));
         return toolRunner;
     }
 
@@ -56,9 +52,8 @@ export class SonarQubeParameterHelper {
      * @param toolRunner     ToolRunner to add parameters to
      * @returns {ToolRunner} ToolRunner with parameters added
      */
-    public static addSonarQubeSourcesParams(toolRunner: ToolRunner): ToolRunner {
-        let sources: string = tl.getPathInput("sources", true, true);
-        toolRunner.arg("-Dsonar.sources=" + sources);
+    public static addSourcesParams(toolRunner: ToolRunner): ToolRunner {
+        toolRunner.arg("-Dsonar.sources=" + tl.getPathInput("sources", true, true));
         // could also use tl.getVariable("Build.SourcesDirectory") (not sure which one is the best)
         toolRunner.arg("-Dsonar.projectBaseDir=" + tl.getVariable("System.DefaultWorkingDirectory"));
         return toolRunner;
@@ -69,15 +64,9 @@ export class SonarQubeParameterHelper {
      * @param toolRunner     ToolRunner to add parameters to
      * @returns {ToolRunner} ToolRunner with parameters added
      */
-    public static addSonarQubeSettingsParams(toolRunner: ToolRunner): ToolRunner {
-        let settingsFile: string = tl.getPathInput("configFile", false, false);
-        let settings: string = tl.getInput("cmdLineArgs", false);
-
+    public static addSettingsParams(toolRunner: ToolRunner): ToolRunner {
         if (tl.filePathSupplied("configFile")) {
-            toolRunner.arg("-Dproject.settings=" + settingsFile);
-        }
-        if (!Utils.isNullOrEmpty(settings)) {
-            toolRunner.arg(settings); // user should take care of escaping the extra settings
+            toolRunner.arg("-Dproject.settings=" + tl.getPathInput("configFile", true, true));
         }
 
         return toolRunner;
@@ -88,7 +77,7 @@ export class SonarQubeParameterHelper {
      * @param toolRunner     ToolRunner to add parameters to
      * @returns {ToolRunner} ToolRunner with parameters added
      */
-    public static addSonarQubeIssuesModeInPrBuild(toolrunner: ToolRunner): ToolRunner {
+    public static addIssuesModeInPrBuild(toolrunner: ToolRunner): ToolRunner {
         if (VstsServerUtils.isPrBuild()) {
             console.log("Detected a PR build - running the SonarQube analysis in issues mode");
 

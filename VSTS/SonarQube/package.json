@@ -28,8 +28,11 @@
   "homepage": "http://redirect.sonarsource.com/doc/install-configure-scanner-tfs-ts.html",
   "devDependencies": {
     "adm-zip": "^0.4.7",
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.5",
     "minimatch": "^3.0.3",
     "minimist": "^1.2.0",
+    "mocha": "^3.2.0",
     "npm-scripts-info": "^0.3.6",
     "semver": "^5.3.0",
     "shelljs": "^0.7.5",

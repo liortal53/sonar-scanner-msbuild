@@ -7,7 +7,7 @@
       "name": "Launch Program",
       "program": "${workspaceRoot}/make.js",
       "args": [
-        "package"
+        "test"
       ],
       "cwd": "${workspaceRoot}"
     },

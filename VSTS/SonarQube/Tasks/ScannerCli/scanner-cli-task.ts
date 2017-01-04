@@ -2,23 +2,20 @@
  * The Scanner CLI task logic
  */
 
-import os = require("os");
 import path = require("path");
 import tl = require("vsts-task-lib/task");
 import { ToolRunner } from "vsts-task-lib/toolrunner";
-import { SonarQubeHelper } from "vsts-sonarqube-common/sq-helper";
-import { SonarQubeParameterHelper } from "vsts-sonarqube-common/parameter-helper";
+import { SonarQubeHelper } from "vsts-sonarqube-common/SonarQubeHelper";
+import { ParametersHelper } from "./parameters-helper";
 
 async function run(): Promise<void> {
     try {
         SonarQubeHelper.exitOnPrBuild();
 
-        var isWindows = os.type().match(/^Win/);
-        var scannerScriptExtension: string = isWindows ? ".bat" : "";
-        var sonarScannerToolPath: string = path.join(__dirname, "sonar-scanner/bin/sonar-scanner" + scannerScriptExtension);
+        let sonarScannerToolPath: string = path.join(__dirname, "sonar-scanner/bin/sonar-scanner.bat");
         tl.checkPath(sonarScannerToolPath, "SonarQube Scanner CLI");
-        var sonarScannerTool: ToolRunner = tl.tool(sonarScannerToolPath);
-        SonarQubeParameterHelper.addSonarQubeParameters(sonarScannerTool);
+        let sonarScannerTool: ToolRunner = tl.tool(sonarScannerToolPath);
+        ParametersHelper.applyParameters(sonarScannerTool);
         await sonarScannerTool.exec();
 
         tl.setResult(tl.TaskResult.Succeeded, "SonarQube Analysis succeeded.");

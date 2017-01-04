@@ -1,6 +1,6 @@
 import tl = require("vsts-task-lib/task");
 
-import { VstsServerUtils } from "./vsts-utils";
+import { VstsServerUtils } from "./VstsServerUtils";
 
 export class SonarQubeHelper {
     public static exitOnPrBuild(): void {

@@ -150,6 +150,17 @@ target.build = function () {
 // run unit tests and create coverage report
 // ex: node make.js test
 target.test = function () {
+  // run the tests
+  var suiteType = options.suite || 'L0'
+  var taskType = options.task || '*'
+  var pattern1 = path.join(buildPath, taskType, 'Tests', suiteType, '*.js')
+  var pattern2 = path.join(buildPath, 'Common', taskType, 'Tests', suiteType, '*.js')
+  var testsSpec = utils.matchFind(pattern1, buildPath).concat(utils.matchFind(pattern2, buildPath))
+  if (!testsSpec.length) {
+    utils.fail(`Unable to find tests using the following patterns: ${JSON.stringify([pattern1, pattern2])}`)
+  }
+
+  utils.run('mocha ' + testsSpec.join(' '), /*inheritStreams:*/true)
 }
 
 // create the extension package (.vsix)

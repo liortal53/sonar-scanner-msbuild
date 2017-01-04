@@ -27,7 +27,7 @@ export class SonarQubeEndpoint {
         var endpointName: string = tl.getInput("connectedServiceName", true);
         var hostUrl: string = tl.getEndpointUrl(endpointName, false);
 
-        tl.debug("SonarQube endpoint: ${hostUrl}");
+        tl.debug(`SonarQube endpoint: ${hostUrl}`);
 
         var hostUsername: string = SonarQubeEndpoint.getSonarQubeAuthParameter(endpointName, "username");
 

@@ -10,9 +10,17 @@
   },
   "common": [
     {
-      "module": "../Common/common",
+      "module": "../Common/Helpers",
       "type": "node",
       "compile": true
+    }
+  ],
+  "rm": [
+    {
+      "items": [
+        "node_modules/vsts-sonarqube-common/node_modules/vsts-task-lib"
+      ],
+      "options": "-Rf"
     }
   ]
 }

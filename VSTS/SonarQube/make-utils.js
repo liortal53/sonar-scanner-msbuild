@@ -19,6 +19,9 @@ var makeOptions = require('./make-options.json')
 // ------------------------------------------------------------------------------
 // shell functions
 // ------------------------------------------------------------------------------
+/**
+ * Throws an exception if the last run shell command resulted in an error.
+ */
 var shellAssert = function () {
   var errMsg = shell.error()
   if (errMsg) {
@@ -26,12 +29,24 @@ var shellAssert = function () {
   }
 }
 
+/**
+ * Changes to directory dir for the duration of the script.
+ *
+ * @param {any} dir
+ */
 var cd = function (dir) {
   shell.cd(dir)
   shellAssert()
 }
 exports.cd = cd
 
+/**
+ * Copies files. The wildcard * is accepted.
+ *
+ * @param {any} options
+ * @param {any} source
+ * @param {any} dest
+ */
 var cp = function (options, source, dest) {
   if (dest) {
     shell.cp(options, source, dest)
@@ -43,6 +58,12 @@ var cp = function (options, source, dest) {
 }
 exports.cp = cp
 
+/**
+ * Creates a directory.
+ *
+ * @param {any} options
+ * @param {any} target
+ */
 var mkdir = function (options, target) {
   if (target) {
     shell.mkdir(options, target)
@@ -54,6 +75,12 @@ var mkdir = function (options, target) {
 }
 exports.mkdir = mkdir
 
+/**
+ * Removes a file.
+ *
+ * @param {any} options
+ * @param {any} target
+ */
 var rm = function (options, target) {
   if (target) {
     shell.rm(options, target)
@@ -65,6 +92,13 @@ var rm = function (options, target) {
 }
 exports.rm = rm
 
+/**
+ * Evaluates the expression and returns corresponding value.
+ *
+ * @param {any} options
+ * @param {any} p
+ * @returns
+ */
 var test = function (options, p) {
   var result = shell.test(options, p)
   shellAssert()
@@ -76,23 +110,36 @@ exports.test = test
 // ------------------------------------------------------------------------------
 // build functions
 // ------------------------------------------------------------------------------
+/**
+ * Adds the directory to the list of environment variables.
+ *
+ * @param {any} directory
+ */
 var addPath = function (directory) {
-    var separator;
-    if (os.platform() == 'win32') {
-        separator = ';';
-    } else {
-        separator = ':';
-    }
+  var separator;
+  if (os.platform() == 'win32') {
+    separator = ';';
+  }
+  else {
+    separator = ':';
+  }
 
-    var existing = process.env['PATH'];
-    if (existing) {
-        process.env['PATH'] = directory + separator + existing;
-    } else {
-        process.env['PATH'] = directory;
-    }
+  var existing = process.env['PATH'];
+  if (existing) {
+    process.env['PATH'] = directory + separator + existing;
+  }
+  else {
+    process.env['PATH'] = directory;
+  }
 }
 exports.addPath = addPath;
 
+/**
+ * Checks that the value is not null or empty.
+ *
+ * @param {any} value
+ * @param {any} name
+ */
 var assert = function (value, name) {
   if (!value) {
     throw new Error('"' + name + '" cannot be null or empty.')
@@ -100,6 +147,12 @@ var assert = function (value, name) {
 }
 exports.assert = assert
 
+/**
+ * Writes headers to the console.
+ *
+ * @param {any} message
+ * @param {any} noBracket
+ */
 var banner = function (message, noBracket) {
   console.log()
   if (!noBracket) {
@@ -113,6 +166,12 @@ var banner = function (message, noBracket) {
 }
 exports.banner = banner
 
+/**
+ * Builds the given node.js based task.
+ *
+ * @param {any} taskPath
+ * @param {any} outDir
+ */
 var buildNodeTask = function (taskPath, outDir) {
   var originalDir = pwd()
   cd(taskPath)
@@ -124,6 +183,13 @@ var buildNodeTask = function (taskPath, outDir) {
 }
 exports.buildNodeTask = buildNodeTask
 
+/**
+ * Copies the files to the given destination.
+ *
+ * @param {any} group
+ * @param {any} sourceRoot
+ * @param {any} destRoot
+ */
 var copyGroup = function (group, sourceRoot, destRoot) {
   // example structure to copy a single file:
   // {
@@ -179,6 +245,13 @@ var copyGroup = function (group, sourceRoot, destRoot) {
   }
 }
 
+/**
+ * Copies the given groups
+ *
+ * @param {any} groups
+ * @param {any} sourceRoot
+ * @param {any} destRoot
+ */
 var copyGroups = function (groups, sourceRoot, destRoot) {
   assert(groups, 'groups')
   assert(groups.length, 'groups.length')
@@ -188,6 +261,13 @@ var copyGroups = function (groups, sourceRoot, destRoot) {
 }
 exports.copyGroups = copyGroups
 
+/**
+ * Copies the task resources
+ *
+ * @param {any} taskMake
+ * @param {any} srcPath
+ * @param {any} destPath
+ */
 var copyTaskResources = function (taskMake, srcPath, destPath) {
   assert(taskMake, 'taskMake')
   assert(srcPath, 'srcPath')
@@ -210,6 +290,13 @@ var copyTaskResources = function (taskMake, srcPath, destPath) {
 }
 exports.copyTaskResources = copyTaskResources
 
+/**
+ * Downloads the external resource if not already downloaded and then return the path to its unzipped content.
+ *
+ * @param {any} url
+ * @param {any} omitExtensionCheck
+ * @returns
+ */
 var downloadArchive = function (url, omitExtensionCheck) {
   // validate parameters
   if (!url) {
@@ -247,6 +334,12 @@ var downloadArchive = function (url, omitExtensionCheck) {
 }
 exports.downloadArchive = downloadArchive
 
+/**
+ * Downloads from the given URL.
+ *
+ * @param {any} url
+ * @returns
+ */
 var downloadFile = function (url) {
   // validate parameters
   if (!url) {
@@ -278,6 +371,11 @@ var downloadFile = function (url) {
 }
 exports.downloadFile = downloadFile
 
+/**
+ * Ensures the path exists.
+ *
+ * @param {any} checkPath
+ */
 var ensureExists = function (checkPath) {
   assert(checkPath, 'checkPath')
   var exists = test('-d', checkPath) || test('-f', checkPath)
@@ -288,6 +386,13 @@ var ensureExists = function (checkPath) {
 }
 exports.ensureExists = ensureExists
 
+/**
+ * Ensures the tool exists in the proper version.
+ *
+ * @param {any} name
+ * @param {any} versionArgs
+ * @param {any} validate
+ */
 var ensureTool = function (name, versionArgs, validate) {
   console.log(name + ' tool:')
   var toolPath = which(name)
@@ -310,12 +415,23 @@ var ensureTool = function (name, versionArgs, validate) {
 }
 exports.ensureTool = ensureTool
 
+/**
+ * Writes the message to the console and exit.
+ *
+ * @param {any} message
+ */
 var fail = function (message) {
   console.error('ERROR: ' + message)
   process.exit(1)
 }
 exports.fail = fail
 
+/**
+ * Gets the external section of the make.json files.
+ *
+ * @param {any} externals
+ * @param {any} destRoot
+ */
 var getExternals = function (externals, destRoot) {
   assert(externals, 'externals')
   assert(destRoot, 'destRoot')
@@ -339,6 +455,14 @@ var getExternals = function (externals, destRoot) {
 }
 exports.getExternals = getExternals
 
+/**
+ * Copies the files based on the given matching expression.
+ *
+ * @param {any} pattern
+ * @param {any} sourceRoot
+ * @param {any} destRoot
+ * @param {any} options
+ */
 var matchCopy = function (pattern, sourceRoot, destRoot, options) {
   assert(pattern, 'pattern')
   assert(sourceRoot, 'sourceRoot')
@@ -362,6 +486,14 @@ var matchCopy = function (pattern, sourceRoot, destRoot, options) {
 }
 exports.matchCopy = matchCopy
 
+/**
+ * Returns the elements matching the given expression.
+ *
+ * @param {any} pattern
+ * @param {any} root
+ * @param {any} options
+ * @returns
+ */
 var matchFind = function (pattern, root, options) {
   assert(pattern, 'pattern')
   assert(root, 'root')
@@ -396,6 +528,12 @@ var matchFind = function (pattern, root, options) {
 }
 exports.matchFind = matchFind
 
+/**
+ * Removes the given group.
+ *
+ * @param {any} group
+ * @param {any} pathRoot
+ */
 var removeGroup = function (group, pathRoot) {
   // example structure to remove an array of files/folders:
   // {
@@ -430,6 +568,12 @@ var removeGroup = function (group, pathRoot) {
   rm(group.options, rootedItems)
 }
 
+/**
+ * Removes all groups.
+ *
+ * @param {any} groups
+ * @param {any} pathRoot
+ */
 var removeGroups = function (groups, pathRoot) {
   assert(groups, 'groups')
   assert(groups.length, 'groups.length')
@@ -439,11 +583,25 @@ var removeGroups = function (groups, pathRoot) {
 }
 exports.removeGroups = removeGroups
 
+/**
+ * Returns a path based on the current folder.
+ *
+ * @param {any} relPath
+ * @returns
+ */
 var rp = function (relPath) {
   return path.join(pwd() + '', relPath)
 }
 exports.rp = rp
 
+/**
+ * Runs the given commands.
+ *
+ * @param {any} cl
+ * @param {any} inheritStreams
+ * @param {any} noHeader
+ * @returns
+ */
 var run = function (cl, inheritStreams, noHeader) {
   if (!noHeader) {
     console.log()
@@ -468,6 +626,11 @@ var run = function (cl, inheritStreams, noHeader) {
 }
 exports.run = run
 
+/**
+ * Validates some of the attributes of the task.json file.
+ *
+ * @param {any} task
+ */
 var validateTask = function (task) {
   if (!task.id || !check.isUUID(task.id)) {
     fail('id is a required guid')
@@ -477,8 +640,8 @@ var validateTask = function (task) {
     fail('name is a required alphanumeric string')
   }
 
-  if (!task.friendlyName || !check.isLength(task.friendlyName, 1, 40)) {
-    fail('friendlyName is a required string <= 40 chars')
+  if (!task.friendlyName || !check.isLength(task.friendlyName, 1, 60)) {
+    fail('friendlyName is a required string <= 60 chars')
   }
 
   if (!task.instanceNameFormat) {
@@ -491,6 +654,12 @@ exports.validateTask = validateTask
 // ------------------------------------------------------------------------------
 // package functions
 // ------------------------------------------------------------------------------
+/**
+ * Imports all required files to the package path.
+ *
+ * @param {any} rootDir
+ * @param {any} extensionPath
+ */
 var importExtension = function (rootDir, extensionPath) {
   mkdir('-p', extensionPath)
   makeOptions['extensionResources'].forEach(function (itemName) {
@@ -506,6 +675,12 @@ var importExtension = function (rootDir, extensionPath) {
 }
 exports.importExtension = importExtension
 
+/**
+ * Copies all tasks from the build path to the package path.
+ *
+ * @param {any} buildPath
+ * @param {any} packagePath
+ */
 var importTasks = function (buildPath, packagePath) {
   assert(buildPath, 'buildPath')
   assert(packagePath, 'packagePath')
@@ -528,6 +703,11 @@ var importTasks = function (buildPath, packagePath) {
 }
 exports.importTasks = importTasks
 
+/**
+ * Updates the version within all task.json files using the extension version.
+ *
+ * @param {any} extensionPath
+ */
 var updateManifests = function (extensionPath) {
   var extensionManifestPath = path.join(extensionPath, 'extension-manifest.json')
   var extensionManifest = JSON.parse(fs.readFileSync(extensionManifestPath))
@@ -545,6 +725,12 @@ var updateManifests = function (extensionPath) {
 }
 exports.updateManifests = updateManifests
 
+/**
+ * Creates the .vsix package.
+ *
+ * @param {any} packagePath
+ * @param {any} distPath
+ */
 var createPackage = function (packagePath, distPath) {
   assert(packagePath, 'packagePath')
   assert(distPath, 'distPath')

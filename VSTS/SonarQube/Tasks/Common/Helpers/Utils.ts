@@ -5,7 +5,7 @@ export class Utils {
      * @param str String to examine
      * @returns {boolean}
      */
-    public static isNullOrEmpty(str:string): boolean {
+    public static isNullOrEmpty(str: string): boolean {
         return str === undefined || str === null || str.length === 0;
     }
 }

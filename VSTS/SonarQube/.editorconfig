@@ -7,3 +7,5 @@ end_of_line = crlf
 
 [*.ts]
 indent_size = 4
+[*.{js,json}]
+indent_size = 2
