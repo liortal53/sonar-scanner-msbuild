@@ -79,7 +79,7 @@ namespace SonarScanner.Shim
 
             PropertiesWriter writer = new PropertiesWriter(config);
             AnalysisProperties properties = GetAnalysisProperties(config);
-            var globalSourceEncoding = GetSourceEncoding(properties, new EncodingProvider());
+            var globalSourceEncoding = GetSourceEncoding(properties, new SonarQube.Common.EncodingProvider());
 
             ProjectInfoAnalysisResult result = ProcessProjectInfoFiles(projects, writer, logger, projectBaseDir, globalSourceEncoding);
             writer.WriteSonarProjectInfo(projectBaseDir, result.SharedFiles);

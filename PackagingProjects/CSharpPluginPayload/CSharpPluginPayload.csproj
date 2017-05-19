@@ -12,13 +12,14 @@
     <ProjectGuid>{87887805-9389-4158-9C3F-BAD53908CC12}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SonarQubeExclude>True</SonarQubeExclude>
     <ScannerCliVersion Condition=" $(ScannerCliVersion) == '' ">3.0.3.778</ScannerCliVersion>
     <ScannerCliArtifact>sonar-scanner-cli-$(ScannerCliVersion).zip</ScannerCliArtifact>
     <ScannerCliDirectory>sonar-scanner-$(ScannerCliVersion)</ScannerCliDirectory>
     <MavenCentralUrl>https://repox.sonarsource.com/sonarsource-public-releases/org/sonarsource/scanner/cli/sonar-scanner-cli/$(ScannerCliVersion)/$(ScannerCliArtifact)</MavenCentralUrl>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -107,13 +108,11 @@
       <OutputFolder ParameterType="System.String" Required="false" />
     </ParameterGroup>
     <Task>
-      <Using Namespace="System.Web"/>
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
+      <Using Namespace="System.Web" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
         using (var client = new System.Net.WebClient())
             { client.DownloadFile(Url, (OutputFolder != null ? OutputFolder + "/" : "") + (File ?? System.IO.Path.GetFileName(new Uri(Url).LocalPath))); }
-        ]]>
-      </Code>
+        ]]></Code>
     </Task>
   </UsingTask>
   <Target Name="CreatePayload" AfterTargets="Build">
@@ -129,7 +128,7 @@
   </Target>
   <Target Name="DownloadScannerCli" Condition="!Exists('$(OutputPath)\$(ScannerCliArtifact)')">
     <Message Text="Downloading: $(MavenCentralUrl)" />
-    <DownloadFile Url="$(MavenCentralUrl)" OutputFolder="$(OutputPath)"/>
+    <DownloadFile Url="$(MavenCentralUrl)" OutputFolder="$(OutputPath)" />
   </Target>
   <Target Name="UnzipScannerCli">
     <RemoveDir Directories="$(OutputPath)$(ScannerCliDirectory)" />

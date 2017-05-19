@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SonarQube.Common</RootNamespace>
     <AssemblyName>SonarQube.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +67,11 @@
     <Compile Include="Interfaces\IOutputWriter.cs" />
     <Compile Include="EncodingProviderWrapper.cs" />
     <Compile Include="Interfaces\IEncodingProvider.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="VerbosityCalculator.cs" />
     <Compile Include="ProcessRunner.cs" />
     <Compile Include="ProcessRunnerArguments.cs" />
@@ -79,11 +85,6 @@
     <Compile Include="ProjectInfo\ProjectLanguages.cs" />
     <Compile Include="ProjectInfo\ProjectType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Serializer.cs" />
     <Compile Include="AnalysisConfig\AnalysisConfig.cs" />
     <Compile Include="AnalysisProperties\AggregatePropertiesProvider.cs" />
@@ -98,8 +99,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
